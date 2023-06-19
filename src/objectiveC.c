@@ -1,29 +1,11 @@
 //
-// Created by Bruno Miguel on 29/04/2022.
+// Created by Bruno Miguel on 14/04/2022.
 //
 
-#include "objectiveD.h"
+#include "objectiveC.h"
 
-char *socket_path = "/tmp/socket";
 
-void socketChild(DATA *myData, int i, int lines, int jump, char *env[], char roomName[4][MAX_BUFFER]) {
-    int uds;
-    struct sockaddr_un channel;
-
-    if ((uds = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("socket error");
-        exit(1);
-    }
-
-    memset(&channel, 0, sizeof(channel));
-    channel.sun_family = AF_UNIX;
-    strncpy(channel.sun_path, socket_path, sizeof(channel.sun_path) - 1);
-
-    if (connect(uds, (struct sockaddr *) &channel, sizeof(channel)) == -1) {
-        perror("connect error");
-        exit(1);
-    }
-
+void printToFileC(DATA *myData, int i, int lines, int jump, char *env[], char roomName[4][MAX_BUFFER]) {
     for (; i < lines; i += jump) {
         int room[4] = {};
         for (int j = i; j > binarySearch(myData, 0, i, myData[i].T1); j--) {
@@ -51,24 +33,24 @@ void socketChild(DATA *myData, int i, int lines, int jump, char *env[], char roo
         for (int z = 0; z < 4; z++) {
             char buffer[MAX_BUFFER];
             if (z == 0) {
-                sprintf(buffer, "%d$%d,%ld,%s#%d\n", getpid(), i, myData[i].T1, roomName[z],
+                sprintf(buffer, "%d$%d,%ld,%s#%d\n",getpid(), i, myData[i].T1, roomName[z],
                         room[z]);
             }
             if (z == 1) {
-                sprintf(buffer, "%s%d$%d,%ld,%s#%d\n", buffer, getpid(), i, myData[i].T2, roomName[z],
+                sprintf(buffer, "%s%d$%d,%ld,%s#%d\n",buffer,getpid(), i, myData[i].T2, roomName[z],
                         room[z]);
             }
             if (z == 2) {
-                sprintf(buffer, "%s%d$%d,%ld,%s#%d\n", buffer, getpid(), i, myData[i].T3, roomName[z],
+                sprintf(buffer, "%s%d$%d,%ld,%s#%d\n",buffer, getpid(), i, myData[i].T3, roomName[z],
                         room[z]);
             }
             if (z == 3) {
-                sprintf(buffer, "%s%d$%d,%ld,%s#%d\n", buffer, getpid(), i, myData[i].T4, roomName[z],
+                sprintf(buffer, "%s%d$%d,%ld,%s#%d\n",buffer,getpid(), i, myData[i].T4, roomName[z],
                         room[z]);
-                write(uds, buffer, strlen(buffer));
+
+                printf("%s", buffer);
             }
         }
     }
-    close(uds);
-    
 }
+
