@@ -1,31 +1,36 @@
-#include "./src/objectives.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include<signal.h>
+#include<unistd.h>
+#include "string.h"
+#include "./src/objectiveB.h"
+#include "./src/objectiveC.h"
+#include "./src/myDataChild.h"
 #include "./src/objectiveD.h"
-#include "./src/objectiveA_parte2.h"
-#include "./src/objectiveB_parte2.h"
-#include "./src/objectiveC_parte2.h"
 
-int main(int argc, char *argv[]) {
-    /*remove("../data/numberCores");
-    remove("../data/numberLines");
-    remove("../data/objectiveC_A");
-    remove("../data/OperatingSystem");
-    remove("../data/numberLines");
-    remove("../data/outProducerConsumer.txt");
-    remove("../data/outThreads.txt");
-*/
-    int saved_out = dup(1);
-    objectiveB();
-    dup2(saved_out, 1);
-    objectiveC();
-    dup2(saved_out, 1);
-    socketServer();
-    dup2(saved_out, 1);
-    threads();
-    dup2(saved_out, 1);
-    threadsB();
-    dup2(saved_out, 1);
-    threadsC();
-    dup2(saved_out, 1);
+int main(int argc, char *argv[], char *env[]) {
 
-    return 0;
+    char roomName[4][MAX_BUFFER] = {"Sala de admissao", "Triagem", "Sala de espera", "Medico"};
+    int lines = (int) strtol(env[3], NULL, 10);
+    DATA *myData = allocationData(lines);
+
+    int jump = (int) strtol(env[2], NULL, 10);
+    int i = (int) strtol(env[0], NULL, 10);
+
+    if (strcmp("B", argv[0]) == 0) {
+        printToFileB(myData, i, lines, jump, env, roomName);
+
+        exit(0);
+    } else if (strcmp("C", argv[0]) == 0) {
+        printToFileC(myData, i, lines, jump, env, roomName);
+        exit(0);
+    } else if(strcmp("D",argv[0]) == 0){
+        socketChild(myData,i,lines,jump,env,roomName);
+        exit(0);
+    }
+    exit(0);
 }
+
+
+
+
